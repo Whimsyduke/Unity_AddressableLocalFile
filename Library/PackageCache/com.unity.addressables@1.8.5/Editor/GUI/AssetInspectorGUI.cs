@@ -13,11 +13,13 @@ namespace UnityEditor.AddressableAssets.GUI
     {
         static GUIStyle s_ToggleMixed;
         static GUIContent s_AddressableAssetToggleText;
+        static GUIContent s_AddressableAllowLocalToggleText;
 
         static AddressableAssetInspectorGUI()
         {
             s_ToggleMixed = null;
             s_AddressableAssetToggleText = new GUIContent("Addressable", "Check this to mark this asset as an Addressable Asset, which includes it in the bundled data and makes it loadable via script by its address.");
+            s_AddressableAllowLocalToggleText = new GUIContent("Allow Local", "Check this to mark allow get this asset from a local path, which use the same path of the asset file inside Assets in local folder of build.");
             Editor.finishedDefaultHeaderGUI += OnPostHeaderGUI;
         }
 
