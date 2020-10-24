@@ -16,7 +16,21 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: 42bf762ca8f9abf4bb65a40a5eaaf5e5
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 2b2fb1d445d27fe4c9479bd581da5557
+    m_Address: GameObject
+    m_ReadOnly: 0
+    m_AllowLocal: 1
+    m_SerializedLabels: []
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
+  - m_GUID: 94102ef135e94614d970236097625303
+    m_Address: Assets/Prefab/GameObject.prefab
+    m_ReadOnly: 0
+    m_AllowLocal: 0
+    m_SerializedLabels: []
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 5abe1fa0273db494e8d2aef694b2eb84, type: 2}
   m_SchemaSet:
