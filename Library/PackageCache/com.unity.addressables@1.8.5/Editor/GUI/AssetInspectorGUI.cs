@@ -132,6 +132,7 @@ namespace UnityEditor.AddressableAssets.GUI
                 {
                     if (GUILayout.Toggle(false, s_AddressableAssetToggleText, GUILayout.ExpandWidth(false)))
                         SetAaEntry(AddressableAssetSettingsDefaultObject.GetSettings(true), editor.targets, true);
+
                 }
                 else if (addressableCount == editor.targets.Length)
                 {
@@ -155,6 +156,8 @@ namespace UnityEditor.AddressableAssets.GUI
                     EditorGUILayout.LabelField(addressableCount + " out of " + editor.targets.Length + " assets are addressable.");
                     GUILayout.EndHorizontal();
                 }
+                if (entry != null)
+                    entry.AllowLocal = GUILayout.Toggle(entry.AllowLocal, s_AddressableAllowLocalToggleText, GUILayout.ExpandWidth(false));
             }
         }
     }
