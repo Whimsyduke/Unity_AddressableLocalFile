@@ -483,15 +483,15 @@ namespace UnityEditor.AddressableAssets.GUI
             switch ((ColumnId)column)
             {
                 case ColumnId.Id:
-                {
-                    // The rect is assumed indented and sized after the content when pinging
-                    float indent = GetContentIndent(item) + extraSpaceBeforeIconAndLabel;
-                    cellRect.xMin += indent;
+                    {
+                        // The rect is assumed indented and sized after the content when pinging
+                        float indent = GetContentIndent(item) + extraSpaceBeforeIconAndLabel;
+                        cellRect.xMin += indent;
 
-                    if (Event.current.type == EventType.Repaint)
-                        m_LabelStyle.Draw(cellRect, item.entry.address, false, false, args.selected, args.focused);
-                }
-                break;
+                        if (Event.current.type == EventType.Repaint)
+                            m_LabelStyle.Draw(cellRect, item.entry.address, false, false, args.selected, args.focused);
+                    }
+                    break;
                 case ColumnId.Path:
                     if (Event.current.type == EventType.Repaint)
                     {
@@ -533,7 +533,14 @@ namespace UnityEditor.AddressableAssets.GUI
                     }
                     break;
                 case ColumnId.AllowLocal:
-                    item.entry.AllowLocal = EditorGUI.Toggle(cellRect, item.entry.AllowLocal);
+                    if (item.entry.ParentEntry == null)
+                    {
+                        item.entry.AllowLocal = EditorGUI.Toggle(cellRect, item.entry.AllowLocal);
+                    }
+                    else
+                    {
+                        EditorGUI.Toggle(cellRect, item.entry.ParentEntry.AllowLocal);
+                    }
                     break;
             }
         }
@@ -606,8 +613,8 @@ namespace UnityEditor.AddressableAssets.GUI
 
             retVal[counter].headerContent = new GUIContent("Allow Local", "Allow get file from local path of /Assets/ of root path as its in Editor Path.");
             retVal[counter].minWidth = 80;
-            retVal[counter].width = 100;
-            retVal[counter].maxWidth = 100;
+            retVal[counter].width = 80;
+            retVal[counter].maxWidth = 80;
             retVal[counter].headerTextAlignment = TextAlignment.Left;
             retVal[counter].canSort = false;
             retVal[counter].autoResize = true;

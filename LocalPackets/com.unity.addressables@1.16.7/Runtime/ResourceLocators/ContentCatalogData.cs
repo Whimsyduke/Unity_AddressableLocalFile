@@ -181,6 +181,11 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
         [SerializeField]
         internal SerializedType[] m_resourceTypes = null;
 
+        [SerializeField]
+        internal string[] m_LocalFileID = null;
+        [SerializeField]
+        internal string[] m_LocalFilePath = null;
+
         struct Bucket
         {
             public int dataOffset;

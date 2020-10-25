@@ -68,6 +68,9 @@ MonoBehaviour:
   m_LabelTable:
     m_LabelNames:
     - default
+    - language
+    - enUS
+    - zhCN
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 37e8c48ec1de04d4984ffcb9c1f42859, type: 2}
