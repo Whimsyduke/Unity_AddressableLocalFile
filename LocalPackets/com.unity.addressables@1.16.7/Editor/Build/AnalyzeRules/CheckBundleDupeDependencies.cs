@@ -153,7 +153,7 @@ namespace UnityEditor.AddressableAssets.Build.AnalyzeRules
             group.GetSchema<ContentUpdateGroupSchema>().StaticContent = true;
 
             foreach (var asset in m_ImplicitAssets)
-                settings.CreateOrMoveEntry(asset.ToString(), group, false, false);
+                settings.CreateOrMoveEntry(asset.ToString(), group, false, false, false);
 
             settings.SetDirty(AddressableAssetSettings.ModificationEvent.BatchModification, null, true, true);
         }

@@ -142,7 +142,7 @@ namespace UnityEditor.AddressableAssets.Settings
                 foreach (var asset in assetList)
                 {
                     var guid = AssetDatabase.AssetPathToGUID(asset);
-                    settings.CreateOrMoveEntry(guid, group, false, false);
+                    settings.CreateOrMoveEntry(guid, group, false, false, false);
                     var imp = AssetImporter.GetAtPath(asset);
                     if (imp != null)
                         imp.SetAssetBundleNameAndVariant(string.Empty, string.Empty);

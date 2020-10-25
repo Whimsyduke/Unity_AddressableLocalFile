@@ -15,11 +15,13 @@ namespace UnityEditor.AddressableAssets.GUI
     {
         static GUIStyle s_ToggleMixed;
         static GUIContent s_AddressableAssetToggleText;
+        static GUIContent s_AddressableAllowLocalToggleText;
 
         static AddressableAssetInspectorGUI()
         {
             s_ToggleMixed = null;
             s_AddressableAssetToggleText = new GUIContent("Addressable", "Check this to mark this asset as an Addressable Asset, which includes it in the bundled data and makes it loadable via script by its address.");
+            s_AddressableAllowLocalToggleText = new GUIContent("Allow Local", "Check this to mark allow get this asset from a local path, which use the same path of the asset file inside Assets in local folder of build.");
             Editor.finishedDefaultHeaderGUI += OnPostHeaderGUI;
         }
 
@@ -63,7 +65,7 @@ namespace UnityEditor.AddressableAssets.GUI
                 var otherTargetInfos = targetInfos.Except(resourceTargets);
                 foreach (var info in otherTargetInfos)
                 {
-                    var e = aaSettings.CreateOrMoveEntry(info.Guid, aaSettings.DefaultGroup, false, false);
+                    var e = aaSettings.CreateOrMoveEntry(info.Guid, aaSettings.DefaultGroup, false, false, false);
                     entriesAdded.Add(e);
                     modifiedGroups.Add(e.parentGroup);
                 }
@@ -169,6 +171,8 @@ namespace UnityEditor.AddressableAssets.GUI
                     EditorGUILayout.LabelField(addressableCount + " out of " + editor.targets.Length + " assets are addressable.");
                     GUILayout.EndHorizontal();
                 }
+                if (entry != null)
+                    entry.AllowLocal = GUILayout.Toggle(entry.AllowLocal, s_AddressableAllowLocalToggleText, GUILayout.ExpandWidth(false));
             }
         }
 

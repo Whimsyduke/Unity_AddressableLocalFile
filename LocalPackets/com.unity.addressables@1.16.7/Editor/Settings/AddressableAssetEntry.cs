@@ -51,6 +51,9 @@ namespace UnityEditor.AddressableAssets.Settings
         [FormerlySerializedAs("m_readOnly")]
         [SerializeField]
         bool m_ReadOnly;
+        [FormerlySerializedAs("m_allowLocal")]
+        [SerializeField]
+        bool m_AllowLocal;
 
         [FormerlySerializedAs("m_serializedLabels")]
         [SerializeField]
@@ -131,6 +134,25 @@ namespace UnityEditor.AddressableAssets.Settings
                 if (m_ReadOnly != value)
                 {
                     m_ReadOnly = value;
+                    SetDirty(AddressableAssetSettings.ModificationEvent.EntryModified, this, true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Allow Load Local Files.
+        /// </summary>
+        public bool AllowLocal
+        {
+            get
+            {
+                return m_AllowLocal;
+            }
+            set
+            {
+                if (m_AllowLocal != value)
+                {
+                    m_AllowLocal = value;
                     SetDirty(AddressableAssetSettings.ModificationEvent.EntryModified, this, true);
                 }
             }
@@ -256,13 +278,14 @@ namespace UnityEditor.AddressableAssets.Settings
             return keys;
         }
 
-        internal AddressableAssetEntry(string guid, string address, AddressableAssetGroup parent, bool readOnly)
+        internal AddressableAssetEntry(string guid, string address, AddressableAssetGroup parent, bool readOnly, bool allowLocal)
         {
             if (guid.Length > 0 && address.Contains("[") && address.Contains("]"))
                 Debug.LogErrorFormat("Address '{0}' cannot contain '[ ]'.", address);
             m_GUID = guid;
             m_Address = address;
             m_ReadOnly = readOnly;
+            m_AllowLocal = allowLocal;
             parentGroup = parent;
             IsInResources = false;
             IsInSceneList = false;
@@ -273,6 +296,7 @@ namespace UnityEditor.AddressableAssets.Settings
             formatter.Serialize(stream, m_GUID);
             formatter.Serialize(stream, m_Address);
             formatter.Serialize(stream, m_ReadOnly);
+            formatter.Serialize(stream, m_AllowLocal);
             formatter.Serialize(stream, m_Labels.Count);
 
             foreach (var t in m_Labels)
@@ -501,11 +525,11 @@ namespace UnityEditor.AddressableAssets.Settings
                     if (string.IsNullOrEmpty(AssetPath) && IsSubAsset)
                         path = ParentEntry.AssetPath;
                     Debug.LogWarning(string.Format("NullReference in entry {0}\nAssetPath: {1}\nAddressableAssetGroup: {2}", address, path, parentGroup.Name));
-                    assets.Add(new AddressableAssetEntry("", namedAddress, parentGroup, true));
+                    assets.Add(new AddressableAssetEntry("", namedAddress, parentGroup, true, false));
                 }
                 else
                 {
-                    var newEntry = parentGroup.Settings.CreateEntry("", namedAddress, parentGroup, true);
+                    var newEntry = parentGroup.Settings.CreateEntry("", namedAddress, parentGroup, true, false);
                     newEntry.IsSubAsset = true;
                     newEntry.ParentEntry = this;
                     newEntry.IsInResources = IsInResources;
@@ -529,7 +553,7 @@ namespace UnityEditor.AddressableAssets.Settings
                     if (string.IsNullOrEmpty(AssetPath) && IsSubAsset)
                         path = ParentEntry.AssetPath;
                     Debug.LogWarning(string.Format("NullReference in entry {0}\nAssetPath: {1}\nAddressableAssetGroup: {2}", address, path, parentGroup.Name));
-                    assets.Add(new AddressableAssetEntry("", spriteName, parentGroup, true));
+                    assets.Add(new AddressableAssetEntry("", spriteName, parentGroup, true, false));
                 }
                 else
                 {
@@ -537,7 +561,7 @@ namespace UnityEditor.AddressableAssets.Settings
                         spriteName = spriteName.Replace("(Clone)", "");
 
                     var namedAddress = string.Format("{0}[{1}]", address, spriteName);
-                    var newEntry = settings.CreateEntry("", namedAddress, parentGroup, true);
+                    var newEntry = settings.CreateEntry("", namedAddress, parentGroup, true, false);
                     newEntry.IsSubAsset = true;
                     newEntry.ParentEntry = this;
                     newEntry.IsInResources = IsInResources;
