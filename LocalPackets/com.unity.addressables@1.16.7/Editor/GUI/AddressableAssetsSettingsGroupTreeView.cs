@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.AddressableAssets;
 using Debug = UnityEngine.Debug;
+using EnumLocalResourceMode = UnityEngine.ResourceManagement.ResourceManager.EnumLocalResourceMode;
 
 namespace UnityEditor.AddressableAssets.GUI
 {
@@ -26,7 +27,7 @@ namespace UnityEditor.AddressableAssets.GUI
             Type,
             Path,
             Labels,
-            AllowLocal,
+            AllowLocalMode,
         }
         ColumnId[] m_SortOptions =
         {
@@ -34,7 +35,7 @@ namespace UnityEditor.AddressableAssets.GUI
             ColumnId.Type,
             ColumnId.Path,
             ColumnId.Labels,
-            ColumnId.AllowLocal,
+            ColumnId.AllowLocalMode,
         };
         public AddressableAssetEntryTreeView(TreeViewState state, MultiColumnHeaderState mchs, AddressableAssetsSettingsGroupEditor ed) : base(state, new MultiColumnHeader(mchs))
         {
@@ -532,14 +533,14 @@ namespace UnityEditor.AddressableAssets.GUI
                         PopupWindow.Show(cellRect, new LabelMaskPopupContent(m_Editor.settings, entries, labelCounts));
                     }
                     break;
-                case ColumnId.AllowLocal:
+                case ColumnId.AllowLocalMode:
                     if (item.entry.ParentEntry == null)
                     {
-                        item.entry.AllowLocal = EditorGUI.Toggle(cellRect, item.entry.AllowLocal);
+                        item.entry.allowLocalMode = (EnumLocalResourceMode)EditorGUI.EnumPopup(cellRect, item.entry.allowLocalMode);
                     }
                     else
                     {
-                        EditorGUI.Toggle(cellRect, item.entry.ParentEntry.AllowLocal);
+                        EditorGUI.EnumPopup(cellRect, item.entry.ParentEntry.allowLocalMode);
                     }
                     break;
             }
@@ -611,10 +612,10 @@ namespace UnityEditor.AddressableAssets.GUI
             retVal[counter].autoResize = true;
             counter++;
 
-            retVal[counter].headerContent = new GUIContent("Allow Local", "Allow get file from local path of /Assets/ of root path as its in Editor Path.");
-            retVal[counter].minWidth = 80;
-            retVal[counter].width = 80;
-            retVal[counter].maxWidth = 80;
+            retVal[counter].headerContent = new GUIContent("Allow Local Mode", "Mode about allowing get file from local path of /Assets/ of root path as its in Editor Path.");
+            retVal[counter].minWidth = 120;
+            retVal[counter].width = 120;
+            retVal[counter].maxWidth = 1000;
             retVal[counter].headerTextAlignment = TextAlignment.Left;
             retVal[counter].canSort = false;
             retVal[counter].autoResize = true;
@@ -1247,7 +1248,7 @@ namespace UnityEditor.AddressableAssets.GUI
                                 var modifiedGroups = new HashSet<AddressableAssetGroup>();
                                 foreach (var node in draggedNodes)
                                 {
-                                    var e = m_Editor.settings.CreateOrMoveEntry(node.entry.guid, parent, false, false, false);
+                                    var e = m_Editor.settings.CreateOrMoveEntry(node.entry.guid, parent, false, EnumLocalResourceMode.Disable, false);
                                     entries.Add(e);
                                     modifiedGroups.Add(e.parentGroup);
                                 }
@@ -1329,7 +1330,7 @@ namespace UnityEditor.AddressableAssets.GUI
                             {
                                 var e = m_Editor.settings.CreateOrMoveEntry(AssetDatabase.AssetPathToGUID(p), parent,
                                     false,
-                                    false,
+                                    EnumLocalResourceMode.Disable,
                                     false);
                                 entries.Add(e);
                                 modifiedGroups.Add(e.parentGroup);

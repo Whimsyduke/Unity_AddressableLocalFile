@@ -7,6 +7,7 @@ using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEditor.Build.Utilities;
 using UnityEditor.VersionControl;
 using UnityEngine;
+using EnumLocalResourceMode = UnityEngine.ResourceManagement.ResourceManager.EnumLocalResourceMode;
 
 namespace UnityEditor.AddressableAssets.Settings
 {
@@ -142,7 +143,7 @@ namespace UnityEditor.AddressableAssets.Settings
                 foreach (var asset in assetList)
                 {
                     var guid = AssetDatabase.AssetPathToGUID(asset);
-                    settings.CreateOrMoveEntry(guid, group, false, false, false);
+                    settings.CreateOrMoveEntry(guid, group, false, EnumLocalResourceMode.Disable, false);
                     var imp = AssetImporter.GetAtPath(asset);
                     if (imp != null)
                         imp.SetAssetBundleNameAndVariant(string.Empty, string.Empty);

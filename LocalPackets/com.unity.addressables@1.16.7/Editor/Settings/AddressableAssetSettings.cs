@@ -18,6 +18,7 @@ using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.ResourceManagement.Util;
 using UnityEngine.Serialization;
 using static UnityEditor.AddressableAssets.Settings.AddressablesFileEnumeration;
+using EnumLocalResourceMode = UnityEngine.ResourceManagement.ResourceManager.EnumLocalResourceMode;
 
 [assembly: InternalsVisibleTo("Unity.Addressables.Editor.Tests")]
 [assembly: InternalsVisibleTo("Unity.Addressables.Tests")]
@@ -1299,11 +1300,11 @@ namespace UnityEditor.AddressableAssets.Settings
             return aa.AddGroupTemplateObject(AssetDatabase.LoadAssetAtPath(assetPath, typeof(ScriptableObject)) as IGroupTemplate);
         }
 
-        internal AddressableAssetEntry CreateEntry(string guid, string address, AddressableAssetGroup parent, bool readOnly, bool allowLocal, bool postEvent = true)
+        internal AddressableAssetEntry CreateEntry(string guid, string address, AddressableAssetGroup parent, bool readOnly, EnumLocalResourceMode allowLocalMode, bool postEvent = true)
         {
             AddressableAssetEntry entry = parent.GetAssetEntry(guid);
             if (entry == null)
-                entry = new AddressableAssetEntry(guid, address, parent, readOnly, allowLocal);
+                entry = new AddressableAssetEntry(guid, address, parent, readOnly, allowLocalMode);
 
             if (!readOnly)
                 SetDirty(ModificationEvent.EntryCreated, entry, postEvent, false);
@@ -1434,7 +1435,7 @@ namespace UnityEditor.AddressableAssets.Settings
                     if (e != null)
                         e.IsInResources = false;
 
-                    var newEntry = CreateOrMoveEntry(item.Key, targetParent, false, false, false);
+                    var newEntry = CreateOrMoveEntry(item.Key, targetParent, false, EnumLocalResourceMode.Disable, false);
                     var index = oldPath.ToLower().LastIndexOf("resources/");
                     if (index >= 0)
                     {
@@ -1509,7 +1510,7 @@ namespace UnityEditor.AddressableAssets.Settings
         /// <param name="readOnly">Is the new entry read only.</param>
         /// <param name="postEvent">Send modification event.</param>
         /// <returns></returns>
-        public AddressableAssetEntry CreateOrMoveEntry(string guid, AddressableAssetGroup targetParent, bool readOnly = false, bool allowLocal = false, bool postEvent = true)
+        public AddressableAssetEntry CreateOrMoveEntry(string guid, AddressableAssetGroup targetParent, bool readOnly = false, EnumLocalResourceMode allowLocalMode = EnumLocalResourceMode.Disable, bool postEvent = true)
         {
             if (targetParent == null || string.IsNullOrEmpty(guid))
                 return null;
@@ -1525,13 +1526,13 @@ namespace UnityEditor.AddressableAssets.Settings
 
                 if (AddressableAssetUtility.IsPathValidForEntry(path))
                 {
-                    entry = CreateEntry(guid, path, targetParent, readOnly, allowLocal, postEvent);
+                    entry = CreateEntry(guid, path, targetParent, readOnly, allowLocalMode, postEvent);
                 }
                 else
                 {
                     if (AssetDatabase.GetMainAssetTypeAtPath(path) != null && BuildUtility.IsEditorAssembly(AssetDatabase.GetMainAssetTypeAtPath(path).Assembly))
                         return null;
-                    entry = CreateEntry(guid, guid, targetParent, true, allowLocal, postEvent);
+                    entry = CreateEntry(guid, guid, targetParent, true, allowLocalMode, postEvent);
                 }
 
                 targetParent.AddAssetEntry(entry, postEvent);
@@ -1549,7 +1550,7 @@ namespace UnityEditor.AddressableAssets.Settings
 
             if (entry == null)
             {
-                entry = new AddressableAssetEntry(guid, address, parentEntry.parentGroup, true, false);
+                entry = new AddressableAssetEntry(guid, address, parentEntry.parentGroup, true, EnumLocalResourceMode.Disable);
                 entry.IsSubAsset = true;
                 entry.ParentEntry = parentEntry;
                 //parentEntry.parentGroup.AddAssetEntry(entry);

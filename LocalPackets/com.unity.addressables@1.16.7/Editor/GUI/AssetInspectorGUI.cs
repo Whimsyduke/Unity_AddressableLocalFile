@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using UnityEditor.AddressableAssets.Build;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
+using EnumLocalResourceMode = UnityEngine.ResourceManagement.ResourceManager.EnumLocalResourceMode;
 
 namespace UnityEditor.AddressableAssets.GUI
 {
@@ -21,7 +24,7 @@ namespace UnityEditor.AddressableAssets.GUI
         {
             s_ToggleMixed = null;
             s_AddressableAssetToggleText = new GUIContent("Addressable", "Check this to mark this asset as an Addressable Asset, which includes it in the bundled data and makes it loadable via script by its address.");
-            s_AddressableAllowLocalToggleText = new GUIContent("Allow Local", "Check this to mark allow get this asset from a local path, which use the same path of the asset file inside Assets in local folder of build.");
+            s_AddressableAllowLocalToggleText = new GUIContent("Allow Local Mode", "Check this to mark allow get this asset from a local path, which use the same path of the asset file inside Assets in local folder of build.");
             Editor.finishedDefaultHeaderGUI += OnPostHeaderGUI;
         }
 
@@ -65,7 +68,7 @@ namespace UnityEditor.AddressableAssets.GUI
                 var otherTargetInfos = targetInfos.Except(resourceTargets);
                 foreach (var info in otherTargetInfos)
                 {
-                    var e = aaSettings.CreateOrMoveEntry(info.Guid, aaSettings.DefaultGroup, false, false, false);
+                    var e = aaSettings.CreateOrMoveEntry(info.Guid, aaSettings.DefaultGroup, false, EnumLocalResourceMode.Disable, false);
                     entriesAdded.Add(e);
                     modifiedGroups.Add(e.parentGroup);
                 }
@@ -172,7 +175,12 @@ namespace UnityEditor.AddressableAssets.GUI
                     GUILayout.EndHorizontal();
                 }
                 if (entry != null)
-                    entry.AllowLocal = GUILayout.Toggle(entry.AllowLocal, s_AddressableAllowLocalToggleText, GUILayout.ExpandWidth(false));
+                {
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label(s_AddressableAllowLocalToggleText, GUILayout.ExpandWidth(false));
+                    entry.allowLocalMode = (EnumLocalResourceMode)EditorGUILayout.EnumPopup(entry.allowLocalMode, GUILayout.ExpandWidth(true));
+                    GUILayout.EndHorizontal();
+                }
             }
         }
 

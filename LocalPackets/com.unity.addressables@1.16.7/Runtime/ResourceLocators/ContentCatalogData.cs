@@ -7,6 +7,7 @@ using UnityEngine.ResourceManagement;
 using UnityEngine.ResourceManagement.ResourceLocations;
 using UnityEngine.ResourceManagement.Util;
 using UnityEngine.Serialization;
+using EnumLocalResourceMode = UnityEngine.ResourceManagement.ResourceManager.EnumLocalResourceMode;
 
 namespace UnityEngine.AddressableAssets.ResourceLocators
 {
@@ -42,9 +43,9 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
         public Type ResourceType { get; private set; }
 
         /// <summary>
-        /// Allow load asset from local path (InternalId).
+        /// Mode of support load from local file.
         /// </summary>
-        public bool AllowLocal { get; private set; }
+        public EnumLocalResourceMode AllowLocalMode { get; private set; }
 
         /// <summary>
         /// Creates a new ContentCatalogEntry object.
@@ -55,8 +56,8 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
         /// <param name="keys">The collection of keys that can be used to retrieve this entry.</param>
         /// <param name="dependencies">Optional collection of keys for dependencies.</param>
         /// <param name="extraData">Optional additional data to be passed to the provider.  For example, AssetBundleProviders use this for cache and crc data.</param>
-        /// <param name="allowLocal">Optional Allow load asset from local path (InternalId).</param>
-        public ContentCatalogDataEntry(Type type, string internalId, string provider, IEnumerable<object> keys, IEnumerable<object> dependencies = null, object extraData = null, bool allowLocal = false)
+        /// <param name="allowLocalMode">Optional Allow load asset from local path (InternalId).</param>
+        public ContentCatalogDataEntry(Type type, string internalId, string provider, IEnumerable<object> keys, IEnumerable<object> dependencies = null, object extraData = null, EnumLocalResourceMode allowLocalMode = EnumLocalResourceMode.Disable)
         {
             InternalId = internalId;
             Provider = provider;
@@ -64,7 +65,7 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
             Keys = new List<object>(keys);
             Dependencies = dependencies == null ? new List<object>() : new List<object>(dependencies);
             Data = extraData;
-            AllowLocal = allowLocal;
+            AllowLocalMode = allowLocalMode;
         }
 
         internal int ComputeDependencyHash()
@@ -516,7 +517,7 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
                 .Select(x => x.ToString())
                 .ToArray();
 
-            m_LocalPaths = data.Where(r=>r.AllowLocal).Select(r => r.InternalId).ToArray();
+            //m_LocalPaths = data.Where(r=>r.AllowLocal).Select(r => r.InternalId).ToArray();
 
 
             //serialize entries

@@ -7,6 +7,7 @@ using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEditor.Build.Pipeline;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using EnumLocalResourceMode = UnityEngine.ResourceManagement.ResourceManager.EnumLocalResourceMode;
 
 namespace UnityEditor.AddressableAssets.Build.AnalyzeRules
 {
@@ -153,7 +154,7 @@ namespace UnityEditor.AddressableAssets.Build.AnalyzeRules
             group.GetSchema<ContentUpdateGroupSchema>().StaticContent = true;
 
             foreach (var asset in m_ImplicitAssets)
-                settings.CreateOrMoveEntry(asset.ToString(), group, false, false, false);
+                settings.CreateOrMoveEntry(asset.ToString(), group, false, EnumLocalResourceMode.Disable, false);
 
             settings.SetDirty(AddressableAssetSettings.ModificationEvent.BatchModification, null, true, true);
         }
