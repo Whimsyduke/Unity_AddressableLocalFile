@@ -18,7 +18,7 @@ MonoBehaviour:
   m_GUID: 86550048b6edaf9498a99b59d28c49d8
   m_SerializeEntries:
   - m_GUID: 94102ef135e94614d970236097625303
-    m_Address: Assets/Prefab/GameObject.prefab
+    m_Address: GameObject.prefab
     m_ReadOnly: 0
     m_AllowLocal: 1
     m_SerializedLabels: []
@@ -27,15 +27,14 @@ MonoBehaviour:
     m_TargetAsset: {fileID: 6275788425030629078, guid: 94102ef135e94614d970236097625303,
       type: 3}
   - m_GUID: d798e7df01851a24a8d23a794faa4550
-    m_Address: Assets/Texture/sprite_sheet.png
+    m_Address: sprite_sheet.png
     m_ReadOnly: 0
     m_AllowLocal: 1
-    m_SerializedLabels:
-    - New Label
+    m_SerializedLabels: []
     m_MainAsset: {fileID: 2800000, guid: d798e7df01851a24a8d23a794faa4550, type: 3}
     m_TargetAsset: {fileID: 2800000, guid: d798e7df01851a24a8d23a794faa4550, type: 3}
   - m_GUID: 2b2fb1d445d27fe4c9479bd581da5557
-    m_Address: Assets/Resources_moved/GameObject.prefab
+    m_Address: GameObject.prefab
     m_ReadOnly: 0
     m_AllowLocal: 1
     m_SerializedLabels: []
@@ -44,23 +43,23 @@ MonoBehaviour:
     m_TargetAsset: {fileID: 6640841838633548326, guid: 2b2fb1d445d27fe4c9479bd581da5557,
       type: 3}
   - m_GUID: c3a4de36727280d43a938c97eb2d11a5
-    m_Address: Assets/Language/GameStrings_enUS.txt
+    m_Address: GameStrings_enUS.txt
     m_ReadOnly: 0
-    m_AllowLocal: 1
+    m_AllowLocal: 0
     m_SerializedLabels:
     - language
     - enUS
-    m_MainAsset: {fileID: 0}
-    m_TargetAsset: {fileID: 0}
+    m_MainAsset: {fileID: 4900000, guid: c3a4de36727280d43a938c97eb2d11a5, type: 3}
+    m_TargetAsset: {fileID: 4900000, guid: c3a4de36727280d43a938c97eb2d11a5, type: 3}
   - m_GUID: 2d9c927db6e1b3f44af95c5de820f1f5
-    m_Address: Assets/Language/GameStrings_zhCN.txt
+    m_Address: GameStrings_zhCN.txt
     m_ReadOnly: 0
     m_AllowLocal: 1
     m_SerializedLabels:
     - language
     - zhCN
-    m_MainAsset: {fileID: 0}
-    m_TargetAsset: {fileID: 0}
+    m_MainAsset: {fileID: 4900000, guid: 2d9c927db6e1b3f44af95c5de820f1f5, type: 3}
+    m_TargetAsset: {fileID: 4900000, guid: 2d9c927db6e1b3f44af95c5de820f1f5, type: 3}
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 5abe1fa0273db494e8d2aef694b2eb84, type: 2}
   m_SchemaSet:

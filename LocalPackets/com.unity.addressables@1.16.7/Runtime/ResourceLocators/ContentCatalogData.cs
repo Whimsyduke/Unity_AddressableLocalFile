@@ -42,6 +42,11 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
         public Type ResourceType { get; private set; }
 
         /// <summary>
+        /// Allow load asset from local path (InternalId).
+        /// </summary>
+        public bool AllowLocal { get; private set; }
+
+        /// <summary>
         /// Creates a new ContentCatalogEntry object.
         /// </summary>
         /// <param name="type">The entry type.</param>
@@ -50,7 +55,8 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
         /// <param name="keys">The collection of keys that can be used to retrieve this entry.</param>
         /// <param name="dependencies">Optional collection of keys for dependencies.</param>
         /// <param name="extraData">Optional additional data to be passed to the provider.  For example, AssetBundleProviders use this for cache and crc data.</param>
-        public ContentCatalogDataEntry(Type type, string internalId, string provider, IEnumerable<object> keys, IEnumerable<object> dependencies = null, object extraData = null)
+        /// <param name="allowLocal">Optional Allow load asset from local path (InternalId).</param>
+        public ContentCatalogDataEntry(Type type, string internalId, string provider, IEnumerable<object> keys, IEnumerable<object> dependencies = null, object extraData = null, bool allowLocal = false)
         {
             InternalId = internalId;
             Provider = provider;
@@ -58,6 +64,7 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
             Keys = new List<object>(keys);
             Dependencies = dependencies == null ? new List<object>() : new List<object>(dependencies);
             Data = extraData;
+            AllowLocal = allowLocal;
         }
 
         internal int ComputeDependencyHash()
@@ -182,9 +189,7 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
         internal SerializedType[] m_resourceTypes = null;
 
         [SerializeField]
-        internal string[] m_LocalFileID = null;
-        [SerializeField]
-        internal string[] m_LocalFilePath = null;
+        internal string[] m_LocalPaths = null;
 
         struct Bucket
         {
@@ -510,6 +515,8 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
             m_Keys = keys.values.Where(x => x != null)
                 .Select(x => x.ToString())
                 .ToArray();
+
+            m_LocalPaths = data.Where(r=>r.AllowLocal).Select(r => r.InternalId).ToArray();
 
 
             //serialize entries
