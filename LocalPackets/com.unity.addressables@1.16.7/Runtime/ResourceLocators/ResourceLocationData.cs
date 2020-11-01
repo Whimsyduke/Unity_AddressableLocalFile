@@ -1,6 +1,7 @@
 using System;
 using UnityEngine.ResourceManagement.Util;
 using UnityEngine.Serialization;
+using EnumLocalResourceMode = UnityEngine.ResourceManagement.ResourceManager.EnumLocalResourceMode;
 
 namespace UnityEngine.AddressableAssets.ResourceLocators
 {
@@ -49,6 +50,13 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
         /// </summary>
         public Type ResourceType { get { return m_ResourceType.Value; } }
 
+        [SerializeField]
+        EnumLocalResourceMode m_AllowLocalMode;
+        /// <summary>
+        /// The mode that load asset from local file
+        /// </summary>
+        public EnumLocalResourceMode AllowLocalMode { get { return m_AllowLocalMode; } }
+
         /// <summary>
         /// Construct a new ResourceLocationData object.
         /// </summary>
@@ -56,14 +64,16 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
         /// <param name="id">The internal id.</param>
         /// <param name="provider">The provider id.</param>
         /// <param name="t">The resource object type.</param>
+        /// <param name="allowLocalMode">The mode that load asset from local file.</param>
         /// <param name="dependencies">Optional array of dependencies.</param>
-        public ResourceLocationData(string[] keys, string id, Type provider, Type t, string[] dependencies = null)
+        public ResourceLocationData(string[] keys, string id, Type provider, Type t, EnumLocalResourceMode allowLocalMode, string[] dependencies = null)
         {
             m_Keys = keys;
             m_InternalId = id;
             m_Provider = provider == null ? "" : provider.FullName;
             m_Dependencies = dependencies == null ? new string[0] : dependencies;
             m_ResourceType = new SerializedType() { Value = t };
+            m_AllowLocalMode = allowLocalMode;
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using EnumLocalResourceMode = UnityEngine.ResourceManagement.ResourceManager.EnumLocalResourceMode;
 
 namespace UnityEngine.ResourceManagement.ResourceLocations
 {
@@ -59,5 +60,10 @@ namespace UnityEngine.ResourceManagement.ResourceLocations
         /// The type of the resource for th location.
         /// </summary>
         Type ResourceType { get; }
+
+        /// <summary>
+        /// The mode that load asset from local file
+        /// </summary>
+        EnumLocalResourceMode AllowLocalMode { get;}
     }
 }

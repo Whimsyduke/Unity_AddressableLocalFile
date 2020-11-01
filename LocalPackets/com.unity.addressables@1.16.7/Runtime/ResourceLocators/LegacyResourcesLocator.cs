@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.ResourceManagement.ResourceLocations;
 using UnityEngine.ResourceManagement.ResourceProviders;
+using EnumLocalResourceMode = UnityEngine.ResourceManagement.ResourceManager.EnumLocalResourceMode;
 
 namespace UnityEngine.AddressableAssets.ResourceLocators
 {
@@ -24,7 +25,7 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
             if (strKey == null)
                 return false;
             locations = new List<IResourceLocation>();
-            locations.Add(new ResourceLocationBase("LegacyResourceLocation", strKey, typeof(LegacyResourcesProvider).FullName, typeof(UnityEngine.Object)));
+            locations.Add(new ResourceLocationBase("LegacyResourceLocation", strKey, typeof(LegacyResourcesProvider).FullName, EnumLocalResourceMode.Disable, typeof(UnityEngine.Object)));
             return true;
         }
 

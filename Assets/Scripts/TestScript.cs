@@ -17,8 +17,8 @@ public class TestScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Addressables.LoadAssetsAsync<TextAsset>(new List<string> { "language", "enUS" }, null, Addressables.MergeMode.Intersection).Completed += Language_Completed;
-        Addressables.LoadAssetsAsync<TextAsset>(new List<string> { "language", "zhCN" }, null, Addressables.MergeMode.Intersection).Completed += Language_Completed;
+        Addressables.LoadAssetsAsync<TextAsset>(new List<string> { "GameStrings", "enUS" }, null, Addressables.MergeMode.Intersection).Completed += Language_Completed;
+        Addressables.LoadAssetsAsync<TextAsset>(new List<string> { "GameStrings", "zhCN" }, null, Addressables.MergeMode.Intersection).Completed += Language_Completed;
     }
 
     private void Language_Completed(UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle<IList<TextAsset>> obj)
@@ -28,7 +28,7 @@ public class TestScript : MonoBehaviour
 
     private void ChangeLanguage(EnumLanguage languag)
     {
-        Addressables.LoadAssetsAsync<TextAsset>(new List<string> { "language", Enum.GetName(typeof(EnumLanguage), languag) }, null, Addressables.MergeMode.Intersection).Completed += Language_Completed;
+        Addressables.LoadAssetsAsync<TextAsset>(new List<string> { "GameStrings", Enum.GetName(typeof(EnumLanguage), languag) }, null, Addressables.MergeMode.Intersection).Completed += Language_Completed;
     }
 
 

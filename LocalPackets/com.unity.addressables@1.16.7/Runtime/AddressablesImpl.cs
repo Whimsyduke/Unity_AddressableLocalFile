@@ -14,6 +14,7 @@ using UnityEngine.ResourceManagement.ResourceLocations;
 using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.ResourceManagement.Util;
 using UnityEngine.SceneManagement;
+using EnumLocalResourceMode = UnityEngine.ResourceManagement.ResourceManager.EnumLocalResourceMode;
 
 #if UNITY_EDITOR
 [assembly: InternalsVisibleTo("Unity.Addressables.Editor.Tests")]
@@ -432,14 +433,14 @@ namespace UnityEngine.AddressableAssets
 
         internal ResourceLocationBase CreateCatalogLocationWithHashDependencies(string catalogPath, string hashFilePath)
         {
-            var catalogLoc = new ResourceLocationBase(catalogPath, catalogPath, typeof(ContentCatalogProvider).FullName, typeof(IResourceLocator));
+            var catalogLoc = new ResourceLocationBase(catalogPath, catalogPath, typeof(ContentCatalogProvider).FullName, EnumLocalResourceMode.Disable, typeof(IResourceLocator));
 
             if (!string.IsNullOrEmpty(hashFilePath))
             {
                 string cacheHashFilePath = ResolveInternalId(kCacheDataFolder + Path.GetFileName(hashFilePath));
 
-                catalogLoc.Dependencies.Add(new ResourceLocationBase(hashFilePath, hashFilePath, typeof(TextDataProvider).FullName, typeof(string)));
-                catalogLoc.Dependencies.Add(new ResourceLocationBase(cacheHashFilePath, cacheHashFilePath, typeof(TextDataProvider).FullName, typeof(string)));
+                catalogLoc.Dependencies.Add(new ResourceLocationBase(hashFilePath, hashFilePath, typeof(TextDataProvider).FullName, EnumLocalResourceMode.Disable, typeof(string)));
+                catalogLoc.Dependencies.Add(new ResourceLocationBase(cacheHashFilePath, cacheHashFilePath, typeof(TextDataProvider).FullName, EnumLocalResourceMode.Disable, typeof(string)));
             }
 
             return catalogLoc;

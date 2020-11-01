@@ -8,6 +8,7 @@ using UnityEngine.ResourceManagement.ResourceLocations;
 using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.ResourceManagement.Util;
 using UnityEngine.U2D;
+using EnumLocalResourceMode = UnityEngine.ResourceManagement.ResourceManager.EnumLocalResourceMode;
 
 namespace UnityEngine.AddressableAssets
 {
@@ -48,14 +49,14 @@ namespace UnityEngine.AddressableAssets
         {
             if (type == typeof(Sprite) && mainLoc.ResourceType == typeof(U2D.SpriteAtlas))
             {
-                locations.Add(new ResourceLocationBase(locName, $"{mainLoc.InternalId}[{subKey}]", typeof(AtlasSpriteProvider).FullName, type, new IResourceLocation[] { mainLoc }));
+                locations.Add(new ResourceLocationBase(locName, $"{mainLoc.InternalId}[{subKey}]", typeof(AtlasSpriteProvider).FullName, EnumLocalResourceMode.Disable, type, new IResourceLocation[] { mainLoc }));
             }
             else
             {
                 if (mainLoc.HasDependencies)
-                    locations.Add(new ResourceLocationBase(locName, $"{mainLoc.InternalId}[{subKey}]", mainLoc.ProviderId, type, mainLoc.Dependencies.ToArray()));
+                    locations.Add(new ResourceLocationBase(locName, $"{mainLoc.InternalId}[{subKey}]", mainLoc.ProviderId, EnumLocalResourceMode.Disable, type, mainLoc.Dependencies.ToArray()));
                 else
-                    locations.Add(new ResourceLocationBase(locName, $"{mainLoc.InternalId}[{subKey}]", mainLoc.ProviderId, type));
+                    locations.Add(new ResourceLocationBase(locName, $"{mainLoc.InternalId}[{subKey}]", mainLoc.ProviderId, EnumLocalResourceMode.Disable, type));
             }
         }
     }

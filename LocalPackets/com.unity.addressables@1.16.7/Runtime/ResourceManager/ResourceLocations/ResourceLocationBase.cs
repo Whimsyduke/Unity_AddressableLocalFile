@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using EnumLocalResourceMode = UnityEngine.ResourceManagement.ResourceManager.EnumLocalResourceMode;
 
 namespace UnityEngine.ResourceManagement.ResourceLocations
 {
@@ -17,6 +18,7 @@ namespace UnityEngine.ResourceManagement.ResourceLocations
         Type m_Type;
         List<IResourceLocation> m_Dependencies;
         string m_PrimaryKey;
+        EnumLocalResourceMode m_AllowLocalMode;
 
         /// <summary>
         /// Internal id.
@@ -76,14 +78,24 @@ namespace UnityEngine.ResourceManagement.ResourceLocations
         }
 
         /// <summary>
+        /// The mode that load asset from local file
+        /// </summary>
+        public EnumLocalResourceMode AllowLocalMode
+        {
+            get { return m_AllowLocalMode; }
+            set { m_AllowLocalMode = value; }
+        }
+
+        /// <summary>
         /// Construct a new ResourceLocationBase.
         /// </summary>
         /// <param name="name">The name of the location.  This is usually set to the primary key, or "address" of the location.</param>
         /// <param name="id">The internal id of the location.  This is used by the IResourceProvider to identify the object to provide.  For example this may contain the file path or url of an asset.</param>
         /// <param name="providerId">The provider id.  This is set to the FullName of the type of the provder class.</param>
+        /// <param name="allowLocalMode">The mode that load asset from local file.</param>
         /// <param name="t">The type of the object to provide.</param>
         /// <param name="dependencies">Locations for the dependencies of this location.</param>
-        public ResourceLocationBase(string name, string id, string providerId, Type t, params IResourceLocation[] dependencies)
+        public ResourceLocationBase(string name, string id, string providerId, EnumLocalResourceMode allowLocalMode, Type t, params IResourceLocation[] dependencies)
         {
             if (string.IsNullOrEmpty(id))
                 throw new ArgumentNullException(nameof(id));
@@ -96,6 +108,7 @@ namespace UnityEngine.ResourceManagement.ResourceLocations
             m_ProviderId = providerId;
             m_Dependencies = new List<IResourceLocation>(dependencies);
             m_Type = t;
+            m_AllowLocalMode = allowLocalMode;
             ComputeDependencyHash();
         }
 

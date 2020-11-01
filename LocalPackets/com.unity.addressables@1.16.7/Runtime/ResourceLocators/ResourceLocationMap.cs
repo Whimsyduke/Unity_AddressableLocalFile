@@ -53,7 +53,7 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
                     Addressables.LogErrorFormat("Duplicate address '{0}' with id '{1}' found, skipping...", rlData.Keys[0], rlData.InternalId);
                     continue;
                 }
-                var loc = new ResourceLocationBase(rlData.Keys[0], Addressables.ResolveInternalId(rlData.InternalId), rlData.Provider, rlData.ResourceType);
+                var loc = new ResourceLocationBase(rlData.Keys[0], Addressables.ResolveInternalId(rlData.InternalId), rlData.Provider, rlData.AllowLocalMode, rlData.ResourceType);
                 locMap.Add(rlData.Keys[0], loc);
                 dataMap.Add(rlData.Keys[0], rlData);
             }

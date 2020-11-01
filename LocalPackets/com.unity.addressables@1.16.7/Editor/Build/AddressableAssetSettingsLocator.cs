@@ -6,6 +6,7 @@ using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.ResourceManagement.ResourceLocations;
 using UnityEngine.ResourceManagement.ResourceProviders;
 using static UnityEditor.AddressableAssets.Settings.AddressablesFileEnumeration;
+using EnumLocalResourceMode = UnityEngine.ResourceManagement.ResourceManager.EnumLocalResourceMode;
 
 namespace UnityEditor.AddressableAssets.Settings
 {
@@ -163,11 +164,11 @@ namespace UnityEditor.AddressableAssets.Settings
                     if (e.IsScene)
                     {
                         if (type == typeof(SceneInstance))
-                            locations.Add(new ResourceLocationBase(e.address, e.AssetPath, typeof(SceneProvider).FullName, typeof(SceneInstance)));
+                            locations.Add(new ResourceLocationBase(e.address, e.AssetPath, typeof(SceneProvider).FullName, e.allowLocalMode, typeof(SceneInstance)));
                     }
                     else if (type == null || type.IsAssignableFrom(e.MainAssetType))
                     {
-                        locations.Add(new ResourceLocationBase(e.address, e.AssetPath, typeof(AssetDatabaseProvider).FullName, e.MainAssetType));
+                        locations.Add(new ResourceLocationBase(e.address, e.AssetPath, typeof(AssetDatabaseProvider).FullName, e.allowLocalMode, e.MainAssetType));
                     }
                     else
                     {
@@ -177,7 +178,7 @@ namespace UnityEditor.AddressableAssets.Settings
                             foreach (var t in AddressableAssetEntry.GatherSubObjectTypes(ids, e.guid))
                             {
                                 if (type.IsAssignableFrom(t))
-                                    locations.Add(new ResourceLocationBase(e.address, e.AssetPath, typeof(AssetDatabaseProvider).FullName, t));
+                                    locations.Add(new ResourceLocationBase(e.address, e.AssetPath, typeof(AssetDatabaseProvider).FullName, e.allowLocalMode, t));
                             }
                         }
                     }
@@ -222,7 +223,7 @@ namespace UnityEditor.AddressableAssets.Settings
 
                             if (m_keyToEntries.ContainsKey(parentFolderKey))
                             {
-                                locations.Add(new ResourceLocationBase(keyPath, AssetDatabase.GUIDToAssetPath(keyStr), typeof(AssetDatabaseProvider).FullName, type));
+                                locations.Add(new ResourceLocationBase(keyPath, AssetDatabase.GUIDToAssetPath(keyStr), typeof(AssetDatabaseProvider).FullName, EnumLocalResourceMode.Disable, type));
                                 break;
                             }
                             slash = keyPath.LastIndexOf('/');
@@ -241,7 +242,7 @@ namespace UnityEditor.AddressableAssets.Settings
                         {
                             var internalId = GetInternalIdFromFolderEntry(keyStr, entry[0]);
                             if (!string.IsNullOrEmpty(internalId) && !string.IsNullOrEmpty(AssetDatabase.AssetPathToGUID(internalId)))
-                                locations.Add(new ResourceLocationBase(keyStr, internalId, typeof(AssetDatabaseProvider).FullName, type));
+                                locations.Add(new ResourceLocationBase(keyStr, internalId, typeof(AssetDatabaseProvider).FullName, EnumLocalResourceMode.Disable, type));
                             break;
                         }
                         slash = keyPath.LastIndexOf('/');
@@ -254,7 +255,7 @@ namespace UnityEditor.AddressableAssets.Settings
             {
                 UnityEngine.Object obj = Resources.Load(keyStr, type == null ? typeof(UnityEngine.Object) : type);
                 if (obj != null)
-                    locations.Add(new ResourceLocationBase(keyStr, keyStr, typeof(LegacyResourcesProvider).FullName, type));
+                    locations.Add(new ResourceLocationBase(keyStr, keyStr, typeof(LegacyResourcesProvider).FullName, EnumLocalResourceMode.Disable, type));
             }
 
             if (locations.Count == 0)
