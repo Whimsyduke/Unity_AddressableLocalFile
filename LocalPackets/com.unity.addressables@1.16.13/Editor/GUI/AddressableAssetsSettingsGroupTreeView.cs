@@ -9,6 +9,7 @@ using UnityEngine.Assertions;
 using UnityEngine.AddressableAssets;
 using Debug = UnityEngine.Debug;
 using static UnityEditor.AddressableAssets.Settings.AddressablesFileEnumeration;
+using EnumLocalResourceMode = UnityEngine.ResourceManagement.ResourceManager.EnumLocalResourceMode;
 
 namespace UnityEditor.AddressableAssets.GUI
 {
@@ -26,14 +27,16 @@ namespace UnityEditor.AddressableAssets.GUI
             Id,
             Type,
             Path,
-            Labels
+            Labels,
+            AllowLocalMode,
         }
         ColumnId[] m_SortOptions =
         {
             ColumnId.Id,
             ColumnId.Type,
             ColumnId.Path,
-            ColumnId.Labels
+            ColumnId.Labels,
+            ColumnId.AllowLocalMode,
         };
         public AddressableAssetEntryTreeView(TreeViewState state, MultiColumnHeaderState mchs, AddressableAssetsSettingsGroupEditor ed) : base(state, new MultiColumnHeader(mchs))
         {
@@ -484,15 +487,15 @@ namespace UnityEditor.AddressableAssets.GUI
             switch ((ColumnId)column)
             {
                 case ColumnId.Id:
-                {
-                    // The rect is assumed indented and sized after the content when pinging
-                    float indent = GetContentIndent(item) + extraSpaceBeforeIconAndLabel;
-                    cellRect.xMin += indent;
+                    {
+                        // The rect is assumed indented and sized after the content when pinging
+                        float indent = GetContentIndent(item) + extraSpaceBeforeIconAndLabel;
+                        cellRect.xMin += indent;
 
-                    if (Event.current.type == EventType.Repaint)
-                        m_LabelStyle.Draw(cellRect, item.entry.address, false, false, args.selected, args.focused);
-                }
-                break;
+                        if (Event.current.type == EventType.Repaint)
+                            m_LabelStyle.Draw(cellRect, item.entry.address, false, false, args.selected, args.focused);
+                    }
+                    break;
                 case ColumnId.Path:
                     if (Event.current.type == EventType.Repaint)
                     {
@@ -533,6 +536,16 @@ namespace UnityEditor.AddressableAssets.GUI
                         PopupWindow.Show(cellRect, new LabelMaskPopupContent(m_Editor.settings, entries, labelCounts));
                     }
                     break;
+                case ColumnId.AllowLocalMode:
+                    if (item.entry.ParentEntry == null)
+                    {
+                        item.entry.allowLocalMode = (EnumLocalResourceMode)EditorGUI.EnumPopup(cellRect, item.entry.allowLocalMode);
+                    }
+                    else
+                    {
+                        EditorGUI.EnumPopup(cellRect, item.entry.ParentEntry.allowLocalMode);
+                    }
+                    break;
             }
         }
 
@@ -556,6 +569,7 @@ namespace UnityEditor.AddressableAssets.GUI
         {
             var retVal = new[]
             {
+                new MultiColumnHeaderState.Column(),
                 new MultiColumnHeaderState.Column(),
                 new MultiColumnHeaderState.Column(),
                 new MultiColumnHeaderState.Column(),
@@ -598,6 +612,15 @@ namespace UnityEditor.AddressableAssets.GUI
             retVal[counter].maxWidth = 1000;
             retVal[counter].headerTextAlignment = TextAlignment.Left;
             retVal[counter].canSort = true;
+            retVal[counter].autoResize = true;
+            counter++;
+
+            retVal[counter].headerContent = new GUIContent("Allow Local Mode", "Mode about allowing get file from local path of /Assets/ of root path as its in Editor Path.");
+            retVal[counter].minWidth = 120;
+            retVal[counter].width = 120;
+            retVal[counter].maxWidth = 1000;
+            retVal[counter].headerTextAlignment = TextAlignment.Left;
+            retVal[counter].canSort = false;
             retVal[counter].autoResize = true;
 
             return retVal;
@@ -1228,7 +1251,7 @@ namespace UnityEditor.AddressableAssets.GUI
                                 var modifiedGroups = new HashSet<AddressableAssetGroup>();
                                 foreach (var node in draggedNodes)
                                 {
-                                    var e = m_Editor.settings.CreateOrMoveEntry(node.entry.guid, parent, false, false);
+                                    var e = m_Editor.settings.CreateOrMoveEntry(node.entry.guid, parent, false, EnumLocalResourceMode.Disable, false);
                                     entries.Add(e);
                                     modifiedGroups.Add(e.parentGroup);
                                 }
@@ -1310,6 +1333,7 @@ namespace UnityEditor.AddressableAssets.GUI
                             {
                                 var e = m_Editor.settings.CreateOrMoveEntry(AssetDatabase.AssetPathToGUID(p), parent,
                                     false,
+                                    EnumLocalResourceMode.Disable,
                                     false);
                                 entries.Add(e);
                                 modifiedGroups.Add(e.parentGroup);

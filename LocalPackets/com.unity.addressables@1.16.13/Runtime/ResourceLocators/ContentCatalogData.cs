@@ -7,6 +7,7 @@ using UnityEngine.ResourceManagement;
 using UnityEngine.ResourceManagement.ResourceLocations;
 using UnityEngine.ResourceManagement.Util;
 using UnityEngine.Serialization;
+using EnumLocalResourceMode = UnityEngine.ResourceManagement.ResourceManager.EnumLocalResourceMode;
 
 namespace UnityEngine.AddressableAssets.ResourceLocators
 {
@@ -42,6 +43,11 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
         public Type ResourceType { get; private set; }
 
         /// <summary>
+        /// Mode of support load from local file.
+        /// </summary>
+        public EnumLocalResourceMode AllowLocalMode { get; private set; }
+
+        /// <summary>
         /// Creates a new ContentCatalogEntry object.
         /// </summary>
         /// <param name="type">The entry type.</param>
@@ -50,7 +56,8 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
         /// <param name="keys">The collection of keys that can be used to retrieve this entry.</param>
         /// <param name="dependencies">Optional collection of keys for dependencies.</param>
         /// <param name="extraData">Optional additional data to be passed to the provider.  For example, AssetBundleProviders use this for cache and crc data.</param>
-        public ContentCatalogDataEntry(Type type, string internalId, string provider, IEnumerable<object> keys, IEnumerable<object> dependencies = null, object extraData = null)
+        /// <param name="allowLocalMode">Optional Allow load asset from local path (InternalId).</param>
+        public ContentCatalogDataEntry(Type type, string internalId, string provider, IEnumerable<object> keys, IEnumerable<object> dependencies = null, object extraData = null, EnumLocalResourceMode allowLocalMode = EnumLocalResourceMode.Disable)
         {
             InternalId = internalId;
             Provider = provider;
@@ -58,6 +65,7 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
             Keys = new List<object>(keys);
             Dependencies = dependencies == null ? new List<object>() : new List<object>(dependencies);
             Data = extraData;
+            AllowLocalMode = allowLocalMode;
         }
     }
 
@@ -159,7 +167,7 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
         internal string m_EntryDataString = null;
 
         const int kBytesPerInt32 = 4;
-        const int k_EntryDataItemPerEntry = 7;
+        const int k_EntryDataItemPerEntry = 8;
 
         [FormerlySerializedAs("m_extraDataString")]
         [SerializeField]
@@ -170,6 +178,9 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
 
         [SerializeField]
         string[] m_InternalIdPrefixes = null;
+
+        [SerializeField]
+        internal string[] m_LocalPaths = null;
 
         struct Bucket
         {
@@ -188,6 +199,7 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
             int m_DependencyHashCode;
             string m_PrimaryKey;
             Type m_Type;
+            EnumLocalResourceMode m_AllowLocalMode;
 
             public string InternalId { get { return m_InternalId; } }
             public string ProviderId { get { return m_ProviderId; } }
@@ -226,7 +238,16 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
                 return (m_HashCode * 31 + t.GetHashCode()) * 31 + DependencyHashCode;
             }
 
-            public CompactLocation(ResourceLocationMap locator, string internalId, string providerId, object dependencyKey, object data, int depHash, string primaryKey, Type type)
+            /// <summary>
+            /// The mode that load asset from local file
+            /// </summary>
+            public EnumLocalResourceMode AllowLocalMode
+            {
+                get { return m_AllowLocalMode; }
+                set { m_AllowLocalMode = value; }
+            }
+
+            public CompactLocation(ResourceLocationMap locator, string internalId, string providerId, object dependencyKey, object data, int depHash, string primaryKey, Type type, EnumLocalResourceMode allowLocalMode)
             {
                 m_Locator = locator;
                 m_InternalId = internalId;
@@ -237,6 +258,7 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
                 m_DependencyHashCode = depHash;
                 m_PrimaryKey = primaryKey;
                 m_Type = type == null ? typeof(object) : type;
+                m_AllowLocalMode = allowLocalMode;
             }
         }
 
@@ -321,9 +343,11 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
                 var primaryKey = SerializationUtilities.ReadInt32FromByteArray(entryData, index);
                 index += kBytesPerInt32;
                 var resourceType = SerializationUtilities.ReadInt32FromByteArray(entryData, index);
+                index += kBytesPerInt32;
+                EnumLocalResourceMode allowMode = (EnumLocalResourceMode)SerializationUtilities.ReadInt32FromByteArray(entryData, index);
                 object data = dataIndex < 0 ? null : SerializationUtilities.ReadObjectFromByteArray(extraData, dataIndex);
                 locations[i] = new CompactLocation(locator, Addressables.ResolveInternalId(ExpandInternalId(m_InternalIdPrefixes, m_InternalIds[internalId])),
-                    m_ProviderIds[providerIndex], dependencyKeyIndex < 0 ? null : keys[dependencyKeyIndex], data, depHash, keys[primaryKey].ToString(), m_resourceTypes[resourceType].Value);
+                    m_ProviderIds[providerIndex], dependencyKeyIndex < 0 ? null : keys[dependencyKeyIndex], data, depHash, keys[primaryKey].ToString(), m_resourceTypes[resourceType].Value, allowMode);
             }
 
             for (int i = 0; i < buckets.Length; i++)
@@ -517,6 +541,7 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
             m_InternalIds = internalIds.values.ToArray();
             m_ProviderIds = providers.values.ToArray();
             m_resourceTypes = types.values.Select(t => new SerializedType() { Value = t }).ToArray();
+            //m_LocalPaths = data.Where(r => r.AllowLocal).Select(r => r.InternalId).ToArray();
 
             if (optimizeSize)
             {
@@ -541,6 +566,7 @@ namespace UnityEngine.AddressableAssets.ResourceLocators
                     entryDataOffset = SerializationUtilities.WriteInt32ToByteArray(entryData, entryIndexToExtraDataIndex[i], entryDataOffset);
                     entryDataOffset = SerializationUtilities.WriteInt32ToByteArray(entryData, keys.map[e.Keys.First()], entryDataOffset);
                     entryDataOffset = SerializationUtilities.WriteInt32ToByteArray(entryData, (ushort)types.map[e.ResourceType], entryDataOffset);
+                    entryDataOffset = SerializationUtilities.WriteInt32ToByteArray(entryData, (int)e.AllowLocalMode, entryDataOffset);
                 }
                 m_EntryDataString = Convert.ToBase64String(entryData);
             }

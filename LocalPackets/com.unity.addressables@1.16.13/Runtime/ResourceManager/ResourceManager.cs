@@ -25,6 +25,29 @@ namespace UnityEngine.ResourceManagement
     public class ResourceManager : IDisposable
     {
         /// <summary>
+        /// Config for load file from local path support
+        /// </summary>
+        public enum EnumLocalResourceMode
+        {
+            /// <summary>
+            /// Do not support
+            /// </summary>
+            Disable = 0,
+            /// <summary>
+            /// Allow load form local path, but use inside asset as default.
+            /// </summary>
+            DefaultInside = 1,
+            /// <summary>
+            /// Allow load form local path, but use local file as default.
+            /// </summary>
+            DefaultLocal = 2,
+            /// <summary>
+            /// Force load local file, if local file is not exist, a exception will throw
+            /// </summary>
+            ForceLocal = 3,
+        }
+
+        /// <summary>
         /// Options for event types that will be sent by the ResourceManager
         /// </summary>
         public enum DiagnosticEventType

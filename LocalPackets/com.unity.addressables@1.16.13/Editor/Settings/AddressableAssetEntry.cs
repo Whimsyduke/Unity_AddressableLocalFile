@@ -14,6 +14,7 @@ using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.ResourceManagement.Util;
 using UnityEngine.Serialization;
 using UnityEngine.U2D;
+using EnumLocalResourceMode = UnityEngine.ResourceManagement.ResourceManager.EnumLocalResourceMode;
 
 namespace UnityEditor.AddressableAssets.Settings
 {
@@ -52,6 +53,9 @@ namespace UnityEditor.AddressableAssets.Settings
         [FormerlySerializedAs("m_readOnly")]
         [SerializeField]
         bool m_ReadOnly;
+        [FormerlySerializedAs("m_allowLocalMode")]
+        [SerializeField]
+        EnumLocalResourceMode m_AllowLocalMode;
 
         [FormerlySerializedAs("m_serializedLabels")]
         [SerializeField]
@@ -132,6 +136,25 @@ namespace UnityEditor.AddressableAssets.Settings
                 if (m_ReadOnly != value)
                 {
                     m_ReadOnly = value;
+                    SetDirty(AddressableAssetSettings.ModificationEvent.EntryModified, this, true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Allow Load Local Files.
+        /// </summary>
+        public EnumLocalResourceMode allowLocalMode
+        {
+            get
+            {
+                return m_AllowLocalMode;
+            }
+            set
+            {
+                if (m_AllowLocalMode != value)
+                {
+                    m_AllowLocalMode = value;
                     SetDirty(AddressableAssetSettings.ModificationEvent.EntryModified, this, true);
                 }
             }
@@ -264,13 +287,14 @@ namespace UnityEditor.AddressableAssets.Settings
             return keys;
         }
 
-        internal AddressableAssetEntry(string guid, string address, AddressableAssetGroup parent, bool readOnly)
+        internal AddressableAssetEntry(string guid, string address, AddressableAssetGroup parent, bool readOnly, EnumLocalResourceMode allowLocalMode)
         {
             if (guid.Length > 0 && address.Contains("[") && address.Contains("]"))
                 Debug.LogErrorFormat("Address '{0}' cannot contain '[ ]'.", address);
             m_GUID = guid;
             m_Address = address;
             m_ReadOnly = readOnly;
+            m_AllowLocalMode = allowLocalMode;
             parentGroup = parent;
             IsInResources = false;
             IsInSceneList = false;
@@ -281,6 +305,7 @@ namespace UnityEditor.AddressableAssets.Settings
             formatter.Serialize(stream, m_GUID);
             formatter.Serialize(stream, m_Address);
             formatter.Serialize(stream, m_ReadOnly);
+            formatter.Serialize(stream, m_AllowLocalMode);
             formatter.Serialize(stream, m_Labels.Count);
 
             foreach (var t in m_Labels)
@@ -532,11 +557,11 @@ namespace UnityEditor.AddressableAssets.Settings
                     if (string.IsNullOrEmpty(AssetPath) && IsSubAsset)
                         path = ParentEntry.AssetPath;
                     Debug.LogWarning(string.Format("NullReference in entry {0}\nAssetPath: {1}\nAddressableAssetGroup: {2}", address, path, parentGroup.Name));
-                    assets.Add(new AddressableAssetEntry("", namedAddress, parentGroup, true));
+                    assets.Add(new AddressableAssetEntry("", namedAddress, parentGroup, true, EnumLocalResourceMode.Disable));
                 }
                 else
                 {
-                    var newEntry = parentGroup.Settings.CreateEntry("", namedAddress, parentGroup, true);
+                    var newEntry = parentGroup.Settings.CreateEntry("", namedAddress, parentGroup, true, EnumLocalResourceMode.Disable);
                     newEntry.IsSubAsset = true;
                     newEntry.ParentEntry = this;
                     newEntry.IsInResources = IsInResources;
@@ -561,7 +586,7 @@ namespace UnityEditor.AddressableAssets.Settings
                     if (string.IsNullOrEmpty(AssetPath) && IsSubAsset)
                         path = ParentEntry.AssetPath;
                     Debug.LogWarning(string.Format("NullReference in entry {0}\nAssetPath: {1}\nAddressableAssetGroup: {2}", address, path, parentGroup.Name));
-                    assets.Add(new AddressableAssetEntry("", spriteName, parentGroup, true));
+                    assets.Add(new AddressableAssetEntry("", spriteName, parentGroup, true, EnumLocalResourceMode.Disable));
                 }
                 else
                 {
@@ -569,7 +594,7 @@ namespace UnityEditor.AddressableAssets.Settings
                         spriteName = spriteName.Replace("(Clone)", "");
 
                     var namedAddress = string.Format("{0}[{1}]", address, spriteName);
-                    var newEntry = settings.CreateEntry("", namedAddress, parentGroup, true);
+                    var newEntry = settings.CreateEntry("", namedAddress, parentGroup, true, EnumLocalResourceMode.Disable);
                     newEntry.IsSubAsset = true;
                     newEntry.ParentEntry = this;
                     newEntry.IsInResources = IsInResources;
@@ -867,11 +892,11 @@ namespace UnityEditor.AddressableAssets.Settings
                 ObjectIdentifier[] ids = depInfo != null ? depInfo[new GUID(guid)].includedObjects.ToArray() :
                     ContentBuildInterface.GetPlayerObjectIdentifiersInAsset(new GUID(guid), EditorUserBuildSettings.activeBuildTarget);
                 foreach (var t in GatherSubObjectTypes(ids, guid))
-                    entries.Add(new ContentCatalogDataEntry(t, assetPath, providerType, keyList, dependencies, extraData));
+                    entries.Add(new ContentCatalogDataEntry(t, assetPath, providerType, keyList, dependencies, extraData, m_AllowLocalMode));
             }
             else if (mainType != null)
             {
-                entries.Add(new ContentCatalogDataEntry(mainType, assetPath, providerType, keyList, dependencies, extraData));
+                entries.Add(new ContentCatalogDataEntry(mainType, assetPath, providerType, keyList, dependencies, extraData, m_AllowLocalMode));
             }
         }
 

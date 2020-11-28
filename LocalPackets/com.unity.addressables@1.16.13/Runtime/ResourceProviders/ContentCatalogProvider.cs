@@ -6,6 +6,7 @@ using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.ResourceManagement;
 using UnityEngine.ResourceManagement.ResourceLocations;
 using UnityEngine.ResourceManagement.ResourceProviders;
+using EnumLocalResourceMode = UnityEngine.ResourceManagement.ResourceManager.EnumLocalResourceMode;
 
 namespace UnityEngine.AddressableAssets.ResourceProviders
 {
@@ -120,7 +121,7 @@ namespace UnityEngine.AddressableAssets.ResourceProviders
                     else
                     {
                         IResourceLocation location = new ResourceLocationBase(idToLoad, idToLoad,
-                            typeof(JsonAssetProvider).FullName, typeof(ContentCatalogData));
+                            typeof(JsonAssetProvider).FullName, EnumLocalResourceMode.Disable, typeof(ContentCatalogData));
                         m_ProviderInterface.ResourceManager.ProvideResource<ContentCatalogData>(location).Completed +=
                             op =>
                             {

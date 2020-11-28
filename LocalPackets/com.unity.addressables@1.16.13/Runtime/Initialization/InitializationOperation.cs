@@ -53,7 +53,7 @@ namespace UnityEngine.AddressableAssets.Initialization
             aa.ResourceManager.ResourceProviders.Add(tdp);
             aa.ResourceManager.ResourceProviders.Add(new ContentCatalogProvider(aa.ResourceManager));
 
-            var runtimeDataLocation = new ResourceLocationBase("RuntimeData", playerSettingsLocation, typeof(JsonAssetProvider).FullName, typeof(ResourceManagerRuntimeData));
+            var runtimeDataLocation = new ResourceLocationBase("RuntimeData", playerSettingsLocation, typeof(JsonAssetProvider).FullName, ResourceManager.EnumLocalResourceMode.Disable, typeof(ResourceManagerRuntimeData));
 
             var initOp = new InitializationOperation(aa);
             initOp.m_rtdOp = aa.ResourceManager.ProvideResource<ResourceManagerRuntimeData>(runtimeDataLocation);

@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEditor.AddressableAssets.Build;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
+using EnumLocalResourceMode = UnityEngine.ResourceManagement.ResourceManager.EnumLocalResourceMode;
 
 namespace UnityEditor.AddressableAssets.GUI
 {
@@ -15,11 +16,13 @@ namespace UnityEditor.AddressableAssets.GUI
     {
         static GUIStyle s_ToggleMixed;
         static GUIContent s_AddressableAssetToggleText;
+        static GUIContent s_AddressableAllowLocalToggleText;
 
         static AddressableAssetInspectorGUI()
         {
             s_ToggleMixed = null;
             s_AddressableAssetToggleText = new GUIContent("Addressable", "Check this to mark this asset as an Addressable Asset, which includes it in the bundled data and makes it loadable via script by its address.");
+            s_AddressableAllowLocalToggleText = new GUIContent("Allow Local Mode", "Check this to mark allow get this asset from a local path, which use the same path of the asset file inside Assets in local folder of build.");
             Editor.finishedDefaultHeaderGUI += OnPostHeaderGUI;
         }
 
@@ -66,7 +69,7 @@ namespace UnityEditor.AddressableAssets.GUI
                 var otherTargetInfos = targetInfos.Except(resourceTargets);
                 foreach (var info in otherTargetInfos)
                 {
-                    var e = aaSettings.CreateOrMoveEntry(info.Guid, aaSettings.DefaultGroup, false, false);
+                    var e = aaSettings.CreateOrMoveEntry(info.Guid, aaSettings.DefaultGroup, false, EnumLocalResourceMode.Disable, false);
                     entriesAdded.Add(e);
                     modifiedGroups.Add(e.parentGroup);
                 }
@@ -170,6 +173,13 @@ namespace UnityEditor.AddressableAssets.GUI
                     if (GUILayout.Toggle(false, s_AddressableAssetToggleText, s_ToggleMixed, GUILayout.ExpandWidth(false)))
                         SetAaEntry(AddressableAssetSettingsDefaultObject.GetSettings(true), editor.targets, true);
                     EditorGUILayout.LabelField(addressableCount + " out of " + editor.targets.Length + " assets are addressable.");
+                    GUILayout.EndHorizontal();
+                }
+                if (entry != null)
+                {
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label(s_AddressableAllowLocalToggleText, GUILayout.ExpandWidth(false));
+                    entry.allowLocalMode = (EnumLocalResourceMode)EditorGUILayout.EnumPopup(entry.allowLocalMode, GUILayout.ExpandWidth(true));
                     GUILayout.EndHorizontal();
                 }
             }

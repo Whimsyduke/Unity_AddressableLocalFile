@@ -20,6 +20,7 @@ using UnityEngine.Build.Pipeline;
 using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.ResourceManagement.Util;
 using static UnityEditor.AddressableAssets.Build.ContentUpdateScript;
+using EnumLocalResourceMode = UnityEngine.ResourceManagement.ResourceManager.EnumLocalResourceMode;
 
 namespace UnityEditor.AddressableAssets.Build.DataBuilders
 {
@@ -403,6 +404,7 @@ namespace UnityEditor.AddressableAssets.Build.DataBuilders
                 localLoadPath,
                 typeof(ContentCatalogProvider),
                 typeof(ContentCatalogData),
+                EnumLocalResourceMode.Disable,
                 dependencyHashes));
 
             return true;
@@ -785,13 +787,15 @@ namespace UnityEditor.AddressableAssets.Build.DataBuilders
                 locations.Add(new ResourceLocationData(
                     new[] { dependencyHashes[(int)ContentCatalogProvider.DependencyHashIndex.Remote] },
                     remoteHashLoadPath,
-                    typeof(TextDataProvider), typeof(string)));
+                    typeof(TextDataProvider), typeof(string),
+                    EnumLocalResourceMode.Disable));
 
                 var cacheLoadPath = "{UnityEngine.Application.persistentDataPath}/com.unity.addressables" + versionedFileName + ".hash";
                 locations.Add(new ResourceLocationData(
                     new[] { dependencyHashes[(int)ContentCatalogProvider.DependencyHashIndex.Cache] },
                     cacheLoadPath,
-                    typeof(TextDataProvider), typeof(string)));
+                    typeof(TextDataProvider), typeof(string),
+                    EnumLocalResourceMode.Disable));
             }
 
             return dependencyHashes;

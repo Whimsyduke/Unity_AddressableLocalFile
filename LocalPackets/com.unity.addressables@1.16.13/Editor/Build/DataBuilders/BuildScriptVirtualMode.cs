@@ -18,6 +18,7 @@ using UnityEngine.ResourceManagement.Util;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using EnumLocalResourceMode = UnityEngine.ResourceManagement.ResourceManager.EnumLocalResourceMode;
 
 namespace UnityEditor.AddressableAssets.Build.DataBuilders
 {
@@ -102,7 +103,7 @@ namespace UnityEditor.AddressableAssets.Build.DataBuilders
             aaContext.runtimeData.CatalogLocations.Add(new ResourceLocationData(
                 new[] { ResourceManagerRuntimeData.kCatalogAddress },
                 string.Format(m_PathFormat, "file://{UnityEngine.Application.dataPath}/../", "catalog"),
-                typeof(ContentCatalogProvider), typeof(ContentCatalogData)));
+                typeof(ContentCatalogProvider), typeof(ContentCatalogData), EnumLocalResourceMode.Disable));
 #if UNITY_2019_3_OR_NEWER
             aaContext.runtimeData.AddressablesVersion = PackageManager.PackageInfo.FindForAssembly(typeof(Addressables).Assembly)?.version;
 #endif
