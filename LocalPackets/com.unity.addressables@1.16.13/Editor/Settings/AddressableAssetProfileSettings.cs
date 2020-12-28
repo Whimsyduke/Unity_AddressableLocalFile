@@ -323,6 +323,9 @@ namespace UnityEditor.AddressableAssets.Settings
                 CreateValue(AddressableAssetSettings.kLocalLoadPath, "{UnityEngine.AddressableAssets.Addressables.RuntimePath}/[BuildTarget]");
                 CreateValue(AddressableAssetSettings.kRemoteBuildPath, "ServerData/[BuildTarget]");
                 CreateValue(AddressableAssetSettings.kRemoteLoadPath, "http://localhost/[BuildTarget]");
+#if UNITY_EDITOR_WIN
+                CreateValue(AddressableAssetSettings.kWindowsLocalLoadPath, "{UnityEngine.AddressableAssets.Addressables.RuntimePath}/[BuildTarget]/Data");
+#endif
             }
             return GetDefaultProfileId();
         }

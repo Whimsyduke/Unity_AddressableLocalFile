@@ -63,6 +63,11 @@ namespace UnityEditor.AddressableAssets.Settings
         public const string kRemoteLoadPath = "RemoteLoadPath";
 
         /// <summary>
+        /// Default name of local file path for windows load path.
+        /// </summary>
+        public const string kWindowsLocalLoadPath = "WindowsLocalLoadPath";
+
+        /// <summary>
         /// Options for labelling all the different generated events.
         /// </summary>
         public enum ModificationEvent
