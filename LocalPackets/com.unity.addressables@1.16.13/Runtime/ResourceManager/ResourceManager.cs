@@ -34,17 +34,13 @@ namespace UnityEngine.ResourceManagement
             /// </summary>
             Disable = 0,
             /// <summary>
-            /// Allow load form local path, but use inside asset as default.
-            /// </summary>
-            DefaultInside = 1,
-            /// <summary>
             /// Allow load form local path, but use local file as default.
             /// </summary>
-            DefaultLocal = 2,
+            DefaultLocal,
             /// <summary>
             /// Force load local file, if local file is not exist, a exception will throw
             /// </summary>
-            ForceLocal = 3,
+            ForceLocal,
         }
 
         /// <summary>
